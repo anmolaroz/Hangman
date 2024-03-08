@@ -1,0 +1,208 @@
+import time # Import time for delays in the game
+import random # Used to randomise words
+
+
+def play_hangman(difficulty_level): #main hame function with difficulty levels
+
+    """
+    Plays the Hangman game.
+
+    Args:
+        difficulty_level (str): The difficulty level of the game - 'easy' 'medium' or 'hard'
+
+    Returns:
+        bool: True if the player wins False otherwise
+    """
+
+
+
+    
+    
+    name = input('Whats your name? ').capitalize() # ask user for name and capitalise first letter
+    
+    print(f'Welcome, {name}! Lets play hangman!') # introduce game
+
+    time.sleep(1) # break for suspense
+
+    print(f'Get ready to guess {name}...') # tell player to get ready
+    
+    time.sleep(0.5) # break for suspense
+
+    word_list = [
+    "apple", "banana", "orange", "elephant", "tiger", "giraffe", "computer", "keyboard", 
+    "guitar", "piano", "monkey", "dolphin", "octopus", "butterfly", "caterpillar", 
+    "strawberry", "raspberry", "pineapple", "watermelon", "tomato", "cucumber", "carrot", 
+    "broccoli", "cauliflower", "pinecone", "pancake", "waffle", "croissant", "baguette", 
+    "sandwich", "hamburger", "pizza", "spaghetti", "burrito", "tacos", "sushi", "salmon", 
+    "trout", "penguin", "parrot", "owl", "dragonfly", "mosquito", "scorpion", "spider", 
+    "kangaroo", "koala", "platypus", "emu", "alpaca", "llama", "cheetah", "lion", "rhino", 
+    "hippo", "zebra", "gorilla", "chimpanzee", "lemur", "toucan", "flamingo", "peacock", 
+    "seahorse", "starfish", "jellyfish", "lobster", "crab", "shrimp", "squid", 
+    "seagull", "pelican", "eagle", "falcon", "hawk", "swan", "duck", "goose", "ostrich", 
+    "hummingbird", "kingfisher", "woodpecker"
+]
+    # list of all the possible words in the game
+
+    word = random.choice(word_list)  # random word is selected
+    word = word.lower()  # word gets lowercased
+
+    word_progress = ["_" for _ in word]  # underscores to represent unguessed letters
+    letters_guessed = ""  # string to keep track of the letters users have guessed
+
+    if difficulty_level == "easy":
+        lives = 10
+
+    elif difficulty_level == "medium":
+        lives = 7
+        
+    elif difficulty_level == 'hard':
+        lives = 5
+
+    # lets the user pick the difficulty of the game. higher difficulty means fewer lives
+        
+    else:
+        print("Invalid difficulty level! choose 'easy', 'medium', or 'hard'!!!")
+
+        # if user does not input a valid difficult level it prompts them to change 
+        return False
+        
+
+    hangman_visual = [
+        """
+          +---+
+              |
+              |
+              |
+             ===""",
+        """
+          +---+
+          O   |
+              |
+              |
+             ===""",
+        """
+          +---+
+          O   |
+          |   |
+              |
+             ===""",
+        """
+          +---+
+          O   |
+         /|   |
+              |
+             ===""",
+        """
+          +---+
+          O   |
+         /|\  |
+              |
+             ===""",
+        """
+          +---+
+          O   |
+         /|\  |
+         /    |
+             ===""",
+        """
+          +---+
+          O   |
+         /|\  |
+         / \  |
+             ==="""
+    ]
+
+    # visual of the hangman for each stage of the game
+
+    while lives > 0:
+        
+        print(" ".join(word_progress))  # show user the word progress
+        
+        guess = input("Enter a letter: ").lower()  # ask the user to input letter and turns it to lower case
+
+        if not guess.isalpha():  # Check to see if the user inputs a letter
+            
+            print('Thats not a letter!')
+            continue  
+
+        if len(guess) != 1: # Checks to see if the user inputs more than 1 letter
+            
+            print('ONLY ONE LETTER!')
+            continue  
+
+        if guess in letters_guessed: # checks if the user has already guessed the letter
+            
+            
+            print('You HAVE already guessed that letter DUMMY')
+            continue  
+
+        letters_guessed += guess  # Add the guessed letter to the list so the user does not repeat
+
+        if guess in word: # checks to see if the guess is correct and updates word progress
+            
+            print(f"Correct! '{guess}' is in the word.")
+            
+            for i, letter in enumerate(word):
+                
+                if letter == guess:
+                    
+                    word_progress[i] = guess
+                    
+        else: # remove a life for an incorrect guess
+            
+            lives -= 1  
+            
+            print(f"Incorrect! '{guess}' is not in the word. {lives} turns left.")
+            if lives > 0:
+                
+                print(hangman_visual[6 - lives])  # show the hangman for the state 
+                
+
+        if "_" not in word_progress: # checks to see if all letters have been guessed
+            
+            print("Congratulations! You have guessed the word!:", "".join(word_progress))
+            return True  # ends function with a win
+
+    print("You HAVE ran out of lives LOSER! The word was:", word)
+    return False #ends function user has lost
+
+def main(): 
+
+
+    """
+    Main function to run the Hangman game
+
+    Returns:
+        None
+    """
+    
+    while True:
+
+        # ask user to pick difficulty level 
+        difficulty_level = input("Choose your difficulty (easy, medium, hard): ").lower()
+        
+        if difficulty_level not in ['easy', 'medium', 'hard']:
+            
+            print("Invalid difficulty level. Please choose 'easy', 'medium', or 'hard'.")
+            
+            continue
+
+
+        #play game with selected difficulty
+        if play_hangman(difficulty_level): 
+            play_again = input("Would you like to play again? (yes/no): ").lower()
+            if play_again != 'no':
+                print('Thanks for playing!')
+                break
+
+        else:
+
+            # ask the user if they want to play again if they lose 
+            play_again = input("Would you like to play again? (yes/no): ").lower()
+            if play_again != 'yes':
+                print('Thanks for playing')
+                break
+
+if __name__ == "__main__": # start gamme - calls main function
+    main()
+
